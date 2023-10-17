@@ -33,33 +33,33 @@ The following command snippet includes all commands to reproduce our major resul
 ```bash
 ## Step 1: run our whole detection pipeline (proactive graph generation, benign/data-misused GNN training, detecting)
 ### the following commands produce the results in the 1st row of Table IV. 
-python Proactive_MIA_node_level_revise.py --dataset Cora --model GCN
-python Proactive_MIA_node_level_revise.py --dataset Cora --model GraphSage
-python Proactive_MIA_node_level_revise.py --dataset Cora --model GAT
-python Proactive_MIA_node_level_revise.py --dataset Cora --model GIN
+python Proactive_MIA_node_level_revise.py --dataset cora --model GCN
+python Proactive_MIA_node_level_revise.py --dataset cora --model GraphSage
+python Proactive_MIA_node_level_revise.py --dataset cora --model GAT
+python Proactive_MIA_node_level_revise.py --dataset cora --model GIN
 
 ### the following commands produce the results in the 2nd row of Table IV. 
-python Proactive_MIA_node_level_revise.py --dataset Citeseer --model GCN
-python Proactive_MIA_node_level_revise.py --dataset Citeseer --model GraphSage
-python Proactive_MIA_node_level_revise.py --dataset Citeseer --model GAT
-python Proactive_MIA_node_level_revise.py --dataset Citeseer --model GIN
+python Proactive_MIA_node_level_revise.py --dataset citeseer --model GCN
+python Proactive_MIA_node_level_revise.py --dataset citeseer --model GraphSage
+python Proactive_MIA_node_level_revise.py --dataset citeseer --model GAT
+python Proactive_MIA_node_level_revise.py --dataset citeseer --model GIN
 
 ### the following commands produce the results in the 3rd row of Table IV. 
-python Proactive_MIA_node_level_revise.py --dataset Pubmed --model GCN
-python Proactive_MIA_node_level_revise.py --dataset Pubmed --model GraphSage
-python Proactive_MIA_node_level_revise.py --dataset Pubmed --model GAT
-python Proactive_MIA_node_level_revise.py --dataset Pubmed --model GIN
+python Proactive_MIA_node_level_revise.py --dataset pubmed --model GCN
+python Proactive_MIA_node_level_revise.py --dataset pubmed --model GraphSage
+python Proactive_MIA_node_level_revise.py --dataset pubmed --model GAT
+python Proactive_MIA_node_level_revise.py --dataset pubmed --model GIN
 
 ### the following commands produce the results in the 4th row of Table IV. 
-python Proactive_MIA_node_level_revise.py --dataset Flickr --model GCN
-python Proactive_MIA_node_level_revise.py --dataset Flickr --model GraphSage
-python Proactive_MIA_node_level_revise.py --dataset Flickr --model GAT
-python Proactive_MIA_node_level_revise.py --dataset Flickr --model GIN
+python Proactive_MIA_node_level_revise.py --dataset flickr --model GCN
+python Proactive_MIA_node_level_revise.py --dataset flickr --model GraphSage
+python Proactive_MIA_node_level_revise.py --dataset flickr --model GAT
+python Proactive_MIA_node_level_revise.py --dataset flickr --model GIN
 ```
 
 The results for each experiment can be shown as: 
 
-`` python evaluation.py --dataset Cora --model GCN``
+`` python evaluation.py --dataset cora --model GCN``
 
 ## Results for E2 (Figure 4)
 
@@ -67,30 +67,30 @@ The following command snippet includes all commands to reproduce our major resul
 ```bash
 ## if you have run E1 and generate the files in ./log, you can directly skip to Step 2
 ## Step 1: run our whole detection pipeline (proactive graph generation, benign/data-misused GNN training, detecting)
-python Proactive_MIA_node_level_revise.py --dataset Cora --model GCN
-python Proactive_MIA_node_level_revise.py --dataset Citeseer --model GCN
-python Proactive_MIA_node_level_revise.py --dataset Pubmed --model GCN
-python Proactive_MIA_node_level_revise.py --dataset Flickr --model GCN
+python Proactive_MIA_node_level_revise.py --dataset cora --model GCN
+python Proactive_MIA_node_level_revise.py --dataset citeseer --model GCN
+python Proactive_MIA_node_level_revise.py --dataset pubmed --model GCN
+python Proactive_MIA_node_level_revise.py --dataset flickr --model GCN
 
-python Proactive_MIA_node_level_revise.py --dataset Cora --model GraphSage
-python Proactive_MIA_node_level_revise.py --dataset Citeseer --model GraphSage
-python Proactive_MIA_node_level_revise.py --dataset Pubmed --model GraphSage 
-python Proactive_MIA_node_level_revise.py --dataset Flickr --model GraphSage
+python Proactive_MIA_node_level_revise.py --dataset cora --model GraphSage
+python Proactive_MIA_node_level_revise.py --dataset citeseer --model GraphSage
+python Proactive_MIA_node_level_revise.py --dataset pubmed --model GraphSage 
+python Proactive_MIA_node_level_revise.py --dataset flickr --model GraphSage
 
-python Proactive_MIA_node_level_revise.py --dataset Cora --model GAT
-python Proactive_MIA_node_level_revise.py --dataset Citeseer --model GAT
-python Proactive_MIA_node_level_revise.py --dataset Pubmed --model GAT
-python Proactive_MIA_node_level_revise.py --dataset Flickr --model GAT
+python Proactive_MIA_node_level_revise.py --dataset cora --model GAT
+python Proactive_MIA_node_level_revise.py --dataset citeseer --model GAT
+python Proactive_MIA_node_level_revise.py --dataset pubmed --model GAT
+python Proactive_MIA_node_level_revise.py --dataset flickr --model GAT
 
-python Proactive_MIA_node_level_revise.py --dataset Cora --model GIN
-python Proactive_MIA_node_level_revise.py --dataset Citeseer --model GIN
-python Proactive_MIA_node_level_revise.py --dataset Pubmed --model GIN
-python Proactive_MIA_node_level_revise.py --dataset Flickr --model GIN
+python Proactive_MIA_node_level_revise.py --dataset cora --model GIN
+python Proactive_MIA_node_level_revise.py --dataset citeseer --model GIN
+python Proactive_MIA_node_level_revise.py --dataset pubmed --model GIN
+python Proactive_MIA_node_level_revise.py --dataset flickr --model GIN
 
 ## Step 2: generate the visualisation results
 ### the following commands produce the figures for Cora-GCN in Figure 4
-python results_processing.py --dataset Cora --model GCN
-python viz.py --dataset Cora --model GCN
+python results_processing.py --dataset cora --model GCN
+python viz.py --dataset cora --model GCN
 
 ```
 
@@ -101,46 +101,46 @@ The following command snippet includes all commands to reproduce our major resul
 ```bash
 ## Step 1: generate the misused models (without our unlearning design) and evaluate their privacy risk
 ### the following commands produce the results in the 1st column of Table VII.
-python Unlearning_without_defence_node_level_revise.py --dataset Cora --model GCN
-python Unlearning_without_defence_node_level_revise.py --dataset Citeseer --model GCN
-python Unlearning_without_defence_node_level_revise.py --dataset Pubmed --model GCN
+python Unlearning_without_defence_node_level_revise.py --dataset cora --model GCN
+python Unlearning_without_defence_node_level_revise.py --dataset citeseer --model GCN
+python Unlearning_without_defence_node_level_revise.py --dataset pubmed --model GCN
 
 ### the following commands produce the results in the 4th column of Table VII.
-python Unlearning_without_defence_node_level_revise.py --dataset Cora --model GraphSage
-python Unlearning_without_defence_node_level_revise.py --dataset Citeseer --model GraphSage
-python Unlearning_without_defence_node_level_revise.py --dataset Pubmed --model GraphSage
+python Unlearning_without_defence_node_level_revise.py --dataset cora --model GraphSage
+python Unlearning_without_defence_node_level_revise.py --dataset citeseer --model GraphSage
+python Unlearning_without_defence_node_level_revise.py --dataset pubmed --model GraphSage
 
 ### the following commands produce the results in the 7th column of Table VII.
-python Unlearning_without_defence_node_level_revise.py --dataset Cora --model GAT
-python Unlearning_without_defence_node_level_revise.py --dataset Citeseer --model GAT
-python Unlearning_without_defence_node_level_revise.py --dataset Pubmed --model GAT
+python Unlearning_without_defence_node_level_revise.py --dataset cora --model GAT
+python Unlearning_without_defence_node_level_revise.py --dataset citeseer --model GAT
+python Unlearning_without_defence_node_level_revise.py --dataset pubmed --model GAT
 
 ### the following commands produce the results in the 10th column of Table VII.
-python Unlearning_without_defence_node_level_revise.py --dataset Cora --model GIN
-python Unlearning_without_defence_node_level_revise.py --dataset Citeseer --model GIN
-python Unlearning_without_defence_node_level_revise.py --dataset Pubmed --model GIN
+python Unlearning_without_defence_node_level_revise.py --dataset cora --model GIN
+python Unlearning_without_defence_node_level_revise.py --dataset citeseer --model GIN
+python Unlearning_without_defence_node_level_revise.py --dataset pubmed --model GIN
 
 
 ## Step 2: run our unlearning pipeline (synthesise the graph, unlearning via fine-tuning, performing MIAs to evaluate unlearning)
 ### the following commands produce the results in the 2nd column of Table VI (results for E4), and the 2nd column of Table VII.
-python Unlearning_node_level_revise.py --dataset Cora --model GCN
-python Unlearning_node_level_revise.py --dataset Citeseer --model GCN
-python Unlearning_node_level_revise.py --dataset Pubmed --model GCN
+python Unlearning_node_level_revise.py --dataset cora --model GCN
+python Unlearning_node_level_revise.py --dataset citeseer --model GCN
+python Unlearning_node_level_revise.py --dataset pubmed --model GCN
 
 ### the following commands produce the results in the 5th column of Table VI (results for E4), and the 5th column of Table VII.
-python Unlearning_node_level_revise.py --dataset Cora --model GraphSage
-python Unlearning_node_level_revise.py --dataset Citeseer --model GraphSage
-python Unlearning_node_level_revise.py --dataset Pubmed --model GraphSage
+python Unlearning_node_level_revise.py --dataset cora --model GraphSage
+python Unlearning_node_level_revise.py --dataset citeseer --model GraphSage
+python Unlearning_node_level_revise.py --dataset pubmed --model GraphSage
 
 ### the following commands produce the results in the 8th column of Table VI (results for E4), and the 8th column of Table VII.
-python Unlearning_node_level_revise.py --dataset Cora --model GAT
-python Unlearning_node_level_revise.py --dataset Citeseer --model GAT
-python Unlearning_node_level_revise.py --dataset Pubmed --model GAT
+python Unlearning_node_level_revise.py --dataset cora --model GAT
+python Unlearning_node_level_revise.py --dataset citeseer --model GAT
+python Unlearning_node_level_revise.py --dataset pubmed --model GAT
 
 ### the following commands produce the results in the 11th column of Table VI (results for E4), and the 11th column of Table VII.
-python Unlearning_node_level_revise.py --dataset Cora --model GIN
-python Unlearning_node_level_revise.py --dataset Citeseer --model GIN
-python Unlearning_node_level_revise.py --dataset Pubmed --model GIN
+python Unlearning_node_level_revise.py --dataset cora --model GIN
+python Unlearning_node_level_revise.py --dataset citeseer --model GIN
+python Unlearning_node_level_revise.py --dataset pubmed --model GIN
 
 ```
 
@@ -152,45 +152,45 @@ The following command snippet includes all commands to reproduce our major resul
 ## if you have run E3, you should have shown some results. 
 ## Step 1: run our unlearning pipeline (synthesise the graph, unlearning via fine-tuning, performing MIAs to evaluate unlearning)
 ### the following commands produce the results in the 2nd column of Table VI, and the 2nd column of Table VII (results for E3).
-python Unlearning_node_level_revise.py --dataset Cora --model GCN
-python Unlearning_node_level_revise.py --dataset Citeseer --model GCN
-python Unlearning_node_level_revise.py --dataset Pubmed --model GCN
+python Unlearning_node_level_revise.py --dataset cora --model GCN
+python Unlearning_node_level_revise.py --dataset citeseer --model GCN
+python Unlearning_node_level_revise.py --dataset pubmed --model GCN
 
 ### the following commands produce the results in the 5th column of Table VI, and the 5th column of Table VII (results for E3).
-python Unlearning_node_level_revise.py --dataset Cora --model GraphSage
-python Unlearning_node_level_revise.py --dataset Citeseer --model GraphSage
-python Unlearning_node_level_revise.py --dataset Pubmed --model GraphSage
+python Unlearning_node_level_revise.py --dataset cora --model GraphSage
+python Unlearning_node_level_revise.py --dataset citeseer --model GraphSage
+python Unlearning_node_level_revise.py --dataset pubmed --model GraphSage
 
 ### the following commands produce the results in the 8th column of Table VI, and the 8th column of Table VII (results for E3).
-python Unlearning_node_level_revise.py --dataset Cora --model GAT
-python Unlearning_node_level_revise.py --dataset Citeseer --model GAT
-python Unlearning_node_level_revise.py --dataset Pubmed --model GAT
+python Unlearning_node_level_revise.py --dataset cora --model GAT
+python Unlearning_node_level_revise.py --dataset citeseer --model GAT
+python Unlearning_node_level_revise.py --dataset pubmed --model GAT
 
 ### the following commands produce the results in the 11th column of Table VI, and the 11th column of Table VII (results for E3).
-python Unlearning_node_level_revise.py --dataset Cora --model GIN
-python Unlearning_node_level_revise.py --dataset Citeseer --model GIN
-python Unlearning_node_level_revise.py --dataset Pubmed --model GIN
+python Unlearning_node_level_revise.py --dataset cora --model GIN
+python Unlearning_node_level_revise.py --dataset citeseer --model GIN
+python Unlearning_node_level_revise.py --dataset pubmed --model GIN
 
 
 ## Step 2: run the retraining baseline (removing the unlearning nodes, retraining)
 ### the following commands produce the results in the 1st column of Table VI.
-python Unlearning_retraining_node_level_revise.py --dataset Cora --model GCN
-python Unlearning_retraining_node_level_revise.py --dataset Citeseer --model GCN
-python Unlearning_retraining_node_level_revise.py --dataset Pubmed --model GCN
+python Unlearning_retraining_node_level_revise.py --dataset cora --model GCN
+python Unlearning_retraining_node_level_revise.py --dataset citeseer --model GCN
+python Unlearning_retraining_node_level_revise.py --dataset pubmed --model GCN
 
 ### the following commands produce the results in the 4th column of Table VI.
-python Unlearning_retraining_node_level_revise.py --dataset Cora --model GraphSage
-python Unlearning_retraining_node_level_revise.py --dataset Citeseer --model GraphSage
-python Unlearning_retraining_node_level_revise.py --dataset Pubmed --model GraphSage
+python Unlearning_retraining_node_level_revise.py --dataset cora --model GraphSage
+python Unlearning_retraining_node_level_revise.py --dataset citeseer --model GraphSage
+python Unlearning_retraining_node_level_revise.py --dataset pubmed --model GraphSage
 
 ### the following commands produce the results in the 7th column of Table VI.
-python Unlearning_retraining_node_level_revise.py --dataset Cora --model GAT
-python Unlearning_retraining_node_level_revise.py --dataset Citeseer --model GAT
-python Unlearning_retraining_node_level_revise.py --dataset Pubmed --model GAT
+python Unlearning_retraining_node_level_revise.py --dataset cora --model GAT
+python Unlearning_retraining_node_level_revise.py --dataset citeseer --model GAT
+python Unlearning_retraining_node_level_revise.py --dataset pubmed --model GAT
 
 ### the following commands produce the results in the 10th column of Table VI.
-python Unlearning_retraining_node_level_revise.py --dataset Cora --model GIN
-python Unlearning_retraining_node_level_revise.py --dataset Citeseer --model GIN
-python Unlearning_retraining_node_level_revise.py --dataset Pubmed --model GIN
+python Unlearning_retraining_node_level_revise.py --dataset cora --model GIN
+python Unlearning_retraining_node_level_revise.py --dataset citeseer --model GIN
+python Unlearning_retraining_node_level_revise.py --dataset pubmed --model GIN
 
 ```

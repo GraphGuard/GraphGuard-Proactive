@@ -39,8 +39,8 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', required=True, type=str,choices=['cora', 'pubmed', 'flickr', 'citeseer'], default='cora')
     parser.add_argument('--model', required=False, type=str, choices=['GCN', 'GAT', 'GIN', 'GraphSage'], default="GCN")
     args = parser.parse_args()
-    dataset = args.dataset.lower()
-    model = args.model.upper()
+    dataset = args.dataset
+    model = args.model
     folder_name = f"{dataset}_{model}_max_False_True_-6_-1"
     if not os.path.exists(f'results/{folder_name}'):
         os.makedirs(f'results/{folder_name}')

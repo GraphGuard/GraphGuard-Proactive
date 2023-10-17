@@ -9,17 +9,13 @@ import pandas as pd
 if __name__ == '__main__':
     # dataset_names = ['cora', 'citeseer', 'pubmed']
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', required=True,
-                        help="Provide the dataset name ")
-    parser.add_argument('--model', required=True,
-                        help="Provide the GNN type ")
+    parser.add_argument('--dataset', required=True, type=str,choices=['cora', 'pubmed', 'flickr', 'citeseer'], default='cora')
+    parser.add_argument('--model', required=False, type=str, choices=['GCN', 'GAT', 'GIN', 'GraphSage'], default="GCN")
     parser.add_argument('--timestr',required=False, 
                         help="Provide the time str such as 20230529_210446")
     args = parser.parse_args()
-    dataset = args.dataset.lower()
-
-    model_name =args.model.upper()
-
+    dataset = args.dataset
+    model_name =args.model
     folder = f"log/{dataset}_{model_name}_max_False_True_-6_-1"
     first_folder_with_extension = f"log/{dataset}_{model_name}_max_False_True_-6_-1/" + os.listdir(folder)[0] + "/"
 

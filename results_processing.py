@@ -36,8 +36,8 @@ def load_json(json_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # parser.add_argument('--config', required=True, help="Please give a config.json file with param details")
-    parser.add_argument('--dataset', required=False, default="cora")
-    parser.add_argument('--model', required=False, type=str, default="GCN")
+    parser.add_argument('--dataset', required=True, type=str,choices=['cora', 'pubmed', 'flickr', 'citeseer'], default='cora')
+    parser.add_argument('--model', required=False, type=str, choices=['GCN', 'GAT', 'GIN', 'GraphSage'], default="GCN")
     args = parser.parse_args()
     dataset = args.dataset.lower()
     model = args.model.upper()

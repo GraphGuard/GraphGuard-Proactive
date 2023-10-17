@@ -34,9 +34,9 @@ def config_logging(log_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', required=False, default="cora")
+    parser.add_argument('--dataset', required=True, type=str,choices=['cora', 'pubmed', 'flickr', 'citeseer'], default='cora')
+    parser.add_argument('--model', required=False, type=str, choices=['GCN', 'GAT', 'GIN', 'GraphSage'], default="GCN")
     parser.add_argument('--epochs', required=False, default=300)
-    parser.add_argument('--model', required=False, type=str, default="GCN")
     parser.add_argument('--device', required=False, type=str, default="0")
     args = parser.parse_args()
     # Get current available GPU

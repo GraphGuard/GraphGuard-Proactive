@@ -68,9 +68,7 @@ def subgraph_generation(g, features, labels, train_mask, test_mask, params):
     networkx_graph = networkx_g.subgraph(list(selected_set)).copy()
     g = dgl.from_networkx(networkx_graph)
     features = features[list(selected_set)]
-    breakpoint()
     labels = labels[list(selected_set)]
-    breakpoint()
     train_mask = train_mask[list(selected_set)]
     test_mask = test_mask[list(selected_set)]
     logging.info("Subgraph generation completed")
@@ -201,7 +199,6 @@ def preprocess(adj, features, labels):
         features = torch.FloatTensor(np.array(features.todense()))
     else:
         features = torch.FloatTensor(features)
-    # breakpoint()
     # adj = torch.FloatTensor(adj.todense())
         
 def normalize_feature(mx):

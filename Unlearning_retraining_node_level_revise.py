@@ -138,7 +138,6 @@ if __name__ == "__main__":
 
     # train target GNN model
     logging.info("Start train the target GNN model")
-    # breakpoint()
     new_target_model = Train_gnn_model(params, new_target_g,
                                    new_target_features,
                                    new_target_labels,

@@ -131,7 +131,7 @@ if __name__ == "__main__":
     proactive_nodex_index_target_mask[proactive_node_index_target] = True
     # train target GNN model
     logging.info("Start train the target GNN model")
-    # breakpoint()
+
     target_model = Train_gnn_model(params, target_g,
                                    target_features,
                                    target_labels,

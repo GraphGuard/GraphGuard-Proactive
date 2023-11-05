@@ -16,10 +16,12 @@ An example for non-GPU users can setup the dependency via the following commands
 
 ```bash
 conda create --name ProactiveMIA python=3.8
-conda activate ProactiveMIA
 conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cpuonly -c pytorch
 conda install -c dglteam dgl=1.1.0
-pip install deeprobust==0.2.8 matplotlib==3.7.1 seaborn==0.12.2 pandas==2.0.1
+pip install deeprobust==0.2.8
+pip install matplotlib==3.7.1
+pip install seaborn==0.12.2
+pip install pandas==2.0.1
 ```
 
 
@@ -43,11 +45,11 @@ We integrate the whole proactive detection pipeline, including proactive graph g
 
 For running the proactive detection in Cora for GCN, you can run the comment as:
 
-`` python Proactive_MIA_node_level_revise.py --dataset cora --model GCN``
+`` python Proactive_MIA_node_level_revise.py --dataset Cora --model GCN``
 
 And results can be shown as: 
 
-`` python evaluation.py --dataset cora --model GCN``
+`` python evaluation.py --dataset Cora --model GCN``
 
 
 ### Training-graph-free Unlearning
@@ -58,9 +60,9 @@ For the unlearning pipeline, we first generate the data-misused GNN model, and t
 
 For running the unlearning in Cora for GCN, you can run the comment as:
 - Step 1: Generate a data-misused GNN model;
-`` python Unlearning_without_defence_node_level_revise.py --dataset cora --model GCN``
+`` python Unlearning_without_defence_node_level_revise.py --dataset Cora --model GCN``
 - Step 2: Perform and evaluate our unlearning algorithm.
-`` python Unlearning_node_level_revise.py --dataset cora --model GCN``
+`` python Unlearning_node_level_revise.py --dataset Cora --model GCN``
 
 
 ## Baslines 
@@ -73,7 +75,7 @@ Data misuse can be detected via general Membership Inference Attacks (MIAs). We 
 
 For running the MIAs detection in Cora for GCN, you can run the comment as:
 
-`` python Proactive_MIA_node_level_revise.py --dataset cora --model GCN``
+`` python Proactive_MIA_node_level_revise.py --dataset Cora --model GCN``
 
 ### Unlearning via Retraining
 
@@ -83,9 +85,9 @@ Unlearning aims to generate an unlearned model training on the dataset without s
 
 For running the retraining in Cora for GCN, you can run the comment as:
 - Step 1: Generate a data-misused GNN model;
-`` python Unlearning_without_defence_node_level_revise.py --dataset cora --model GCN``
+`` python Unlearning_without_defence_node_level_revise.py --dataset Cora --model GCN``
 - Step 2: Perform and evaluate our unlearning algorithm.
-`` python Unlearning_retraining_node_level_revise.py --dataset cora --model GCN``
+`` python Unlearning_retraining_node_level_revise.py --dataset Cora --model GCN``
 
 ## Reference
 >

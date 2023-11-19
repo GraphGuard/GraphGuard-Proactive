@@ -16,12 +16,10 @@ An example for non-GPU users can setup the dependency via the following commands
 
 ```bash
 conda create --name ProactiveMIA python=3.8
+conda activate ProactiveMIA
 conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cpuonly -c pytorch
 conda install -c dglteam dgl=1.1.0
-pip install deeprobust==0.2.8
-pip install matplotlib==3.7.1
-pip install seaborn==0.12.2
-pip install pandas==2.0.1
+pip install deeprobust==0.2.8 matplotlib==3.7.1 seaborn==0.12.2 pandas==2.0.1
 ```
 
 ## Structure and Important Files

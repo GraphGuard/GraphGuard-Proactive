@@ -24,6 +24,9 @@ pip install seaborn==0.12.2
 pip install pandas==2.0.1
 ```
 
+## Structure
+
+``\AE``
 
 ## Usage 
 

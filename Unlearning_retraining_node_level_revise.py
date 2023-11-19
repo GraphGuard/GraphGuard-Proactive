@@ -52,7 +52,7 @@ if __name__ == "__main__":
     # set up logging
     # create folder name by config params
     folder_name = 'log/' + config['params']['dataset'] + '_' + args.model + '_' + \
-                  'Unlearning_without_defence' + '_' + config['params']['proattribute_method'] + '_' + config['params']['inject_only_proactive'] + '_' + \
+                  'Unlearning_retraining' + '_' + config['params']['proattribute_method'] + '_' + config['params']['inject_only_proactive'] + '_' + \
                   config['params']['feature_inference_only'] + '_' + str(
         config['params']['proattribute_max_from']) + '_' + \
                   str(config['params']['proattribute_max_to'])

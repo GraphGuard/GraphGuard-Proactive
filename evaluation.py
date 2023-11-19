@@ -74,8 +74,12 @@ def calculate_fp_tp(true_labels, predicted_labels, positive_class):
 def calculate_auc_score(prob_dict, log_paths, extra_exp):
     # ours = ['target_pro_feat_eye_g_non_pro_logits.npy', 'new_target_pro_feat_eye_g_logits.npy']
     # baseline = ['target_feat_g_non_proa_logits.npy', 'target_logits.npy']
-    baseline = ['target_non_mem_logits.npy', 'target_mem_logits.npy']
-    ours = ['target_pro_non_mem_logits.npy', 'target_pro_mem_logits.npy']
+    if dataset == 'citeseer':
+        baseline = ['target_non_mem_logits.npy', 'target_mem_logits.npy']
+        ours = ['target_pro_non_mem_logits.npy', 'target_pro_mem_logits.npy']
+    else:
+        ours = ['target_pro_feat_eye_g_non_pro_logits.npy', 'new_target_pro_feat_eye_g_logits.npy']
+        baseline = ['target_feat_g_non_proa_logits.npy', 'target_logits.npy']
     compeff = ['target_feat_eye_g_non_pro_logits.npy', 'target_feat_eye_g_logits.npy']
     comprobust = ['target_pro_feat_eye_g_non_pro_logits.npy', 'new_nom_adj_target_logits.npy']
     # get key and prob from dict

@@ -24,9 +24,43 @@ pip install seaborn==0.12.2
 pip install pandas==2.0.1
 ```
 
-## Structure
+## Structure and Important Files
 
-``\AE``
+``/AE/reproduce.md`` Introduction and guidance for reproduction.
+
+``/baselines`` Codes for robustness evaluations.
+
+``/config`` Json files for the hyperparameters for different datasets.
+
+``/data`` Graph partition index files (to be updated).
+
+``/net`` Graph Neural Network Architectures.
+
+``/others`` Backup files and functions. 
+
+``/outputfig`` Output figures.
+
+``/train`` Functions contain training process:
+
+- ``/train/train_mia.py`` functions for Node-level Membership Inference.
+
+- ``/train/train_proactive.py`` functions for the Construction of Radioactive Graph.
+
+- ``/train/train_gnn.py`` functions for the GNN training.
+
+``/utils`` Other functions used in the artifacts (such as graph processing).
+
+``/README.md`` Introduction to the artifact.
+
+``/Proactive_MIA_node_level_revise.py`` Proactive detection pipeline, including proactive graph generation, benign/data-misused GNN training, and detection.
+
+``/evaluation.py`` Comparing AUC between our method and the baseline. 
+
+``/Unlearning_without_defence_node_level_revise.py`` Functions for constructing and evaluating the data-misused GNN models. 
+
+``/Unlearning_node_level_revise.py`` Unlearning pipeline, including proactive graph generation, benign/data-misused GNN training, and unlearning. 
+
+``/Unlearning_retraining_node_level_revise.py`` Baseline method for unlearning (training from scratch).
 
 ## Usage 
 

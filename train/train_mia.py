@@ -2,6 +2,7 @@ import torch
 import logging
 import torch.nn.functional as F
 from net.gcn import Attack
+import dgl
 def Baseline_mia(params, target_g, shadow_g, shadow_model, target_features, shadow_features):
     """
     This function is for implement a baseline MIA. It will print out the attack successful rate.
@@ -39,8 +40,86 @@ def Baseline_mia(params, target_g, shadow_g, shadow_model, target_features, shad
     logits_shadow = shadow_model(shadow_g.adjacency_matrix(), shadow_features)
     logits_total = torch.vstack((logits_target, logits_shadow))
 
+    # # worse MIA
+    # member_labels = torch.zeros([target_features.size()[0], 1]).long()
+    # nonmember_labels = torch.ones([shadow_features.size()[0], 1]).long()
+    # logits_labels = torch.vstack((member_labels, nonmember_labels)).squeeze(1)
+
+    #general MIA
     member_labels = torch.ones([target_features.size()[0], 1]).long()
     nonmember_labels = torch.zeros([shadow_features.size()[0], 1]).long()
+    logits_labels = torch.vstack((member_labels, nonmember_labels)).squeeze(1)
+
+    # get params
+    num_classes = params['net_params']['num_labels']
+    device = params['device']
+    attack_model = Attack(int(num_classes))
+    attack_model = attack_model.to(device)
+    opt_attack = torch.optim.Adam(attack_model.parameters())
+    logits_total = logits_total.to(device)
+    logits_labels = logits_labels.to(device)
+    attack_model.train()
+    for epoch in range(500):
+        total = 0
+        correct = 0
+        attack_logits = attack_model(logits_total)
+        attack_loss = F.cross_entropy(attack_logits, logits_labels)
+        # print(attack_loss)
+        opt_attack.zero_grad()
+        attack_loss.backward(retain_graph=True)
+        opt_attack.step()
+        _, indices = torch.max(attack_logits, dim=1)
+        correct = torch.sum(indices == logits_labels)
+        total += len(logits_labels)
+        if (epoch + 1) % 100 == 0:
+            logging.info(f"Epoch: {epoch+1}, Attack loss: {attack_loss}, Attack accuracy: {correct.item() * 1.0 / total}")
+    return attack_model
+
+def Pro_mia(params, target_g, target_model, target_features, target_indexes, shadow_indexes):
+    """
+    This function is for implement a baseline MIA for unlearning. It will print out the attack successful rate.
+
+    Inputs:
+    target_g:
+    target_features:
+    target_indexes:
+
+    Outputs:
+    attack_model
+    """
+    # shadow graph partitions
+    # target_g, target_features, target_labels, target_train_mask, target_test_mask, \
+    #     shadow_g, shadow_features, shadow_labels, shadow_train_mask, shadow_test_mask = \
+    #     Graph_partition(g, features, labels, train_mask, test_mask)
+    # # train shadow model
+    # print("The shadow GNN model accuracy for baseline attack is:")
+    # shadow_model = Train_gnn_model('GCN', target_g, target_features, target_labels, target_train_mask, target_test_mask)
+
+
+
+    # train attack model
+    target_model.eval()
+
+    # # check the train-test gap of model:
+    # print("Train test gap")
+    # Evaluation_gnn(shadow_model, target_g, target_features, target_labels)
+    # Evaluation_gnn(shadow_model, shadow_g, shadow_features, shadow_labels)
+    eyes_g = dgl.DGLGraph()
+    eyes_g.add_nodes(target_g.number_of_nodes())
+    eyes_g.add_edges(torch.tensor(range(target_g.number_of_nodes())), torch.tensor(range(target_g.number_of_nodes())))
+
+    logits_target = target_model(eyes_g.adjacency_matrix(), target_features)[target_indexes]
+    logits_shadow = target_model(eyes_g.adjacency_matrix(), target_features)[shadow_indexes]
+    logits_total = torch.vstack((logits_target, logits_shadow))
+
+    # # worse MIA
+    # member_labels = torch.zeros([target_features.size()[0], 1]).long()
+    # nonmember_labels = torch.ones([shadow_features.size()[0], 1]).long()
+    # logits_labels = torch.vstack((member_labels, nonmember_labels)).squeeze(1)
+
+    #general MIA
+    member_labels = torch.ones([target_features[target_indexes].size()[0], 1]).long()
+    nonmember_labels = torch.zeros([target_features[shadow_indexes].size()[0], 1]).long()
     logits_labels = torch.vstack((member_labels, nonmember_labels)).squeeze(1)
 
     # get params
@@ -98,6 +177,11 @@ def MIA_evaluation(attack_model, target_model,
 
     logits_total = torch.vstack((logits_target, logits_shadow))
 
+    # # worse MIA
+    # member_labels = torch.zeros([target_features.size()[0], 1]).long()
+    # nonmember_labels = torch.ones([shadow_features.size()[0], 1]).long()
+
+    #general MIA
     member_labels = torch.ones([target_features.size()[0], 1]).long()
     nonmember_labels = torch.zeros([shadow_features.size()[0], 1]).long()
 
@@ -124,6 +208,68 @@ def MIA_evaluation(attack_model, target_model,
         print("2:1 ", mask_total.shape)
     correct = torch.sum((indices[mask_total] == logits_labels[mask_total]))
     return correct.item() * 1.0 / len(logits_labels[mask_total])
+
+def Pro_MIA_evaluation(attack_model, target_model,
+                   target_g, target_features, shadow_g, shadow_features, target_evaluation_mask, shadow_evaluation_mask):
+    """
+    This function is for evaluate the performance of MIA using attack model. It will print our the attack performance.
+
+    Inputs:
+    attack_model: the generated attack model for MIA.
+    target_model: the target model.
+    Two member and nonmember graph containing:
+    g: graph in DGL graph format
+    features: features in Tensor format
+
+    evaluation_index: The nodes that we evaluate their MIA.
+
+    Outputs:
+    None
+    """
+    attack_model = attack_model.to('cpu')
+    target_model = target_model.to('cpu')
+    attack_model.eval()
+    target_model.eval()
+
+    eyes_g = dgl.DGLGraph()
+    eyes_g.add_nodes(target_g.number_of_nodes())
+    eyes_g.add_edges(torch.tensor(range(target_g.number_of_nodes())), torch.tensor(range(target_g.number_of_nodes())))
+
+    logits_target = target_model(eyes_g.adjacency_matrix(), target_features)[target_evaluation_mask]
+    logits_shadow = target_model(eyes_g.adjacency_matrix(), target_features)[shadow_evaluation_mask]
+    logits_total = torch.vstack((logits_target, logits_shadow))
+
+    # # worse MIA
+    # member_labels = torch.zeros([target_features.size()[0], 1]).long()
+    # nonmember_labels = torch.ones([shadow_features.size()[0], 1]).long()
+
+    #general MIA
+    member_labels = torch.ones([target_features[target_evaluation_mask].size()[0], 1]).long()
+    nonmember_labels = torch.zeros([target_features[shadow_evaluation_mask].size()[0], 1]).long()
+
+    # print(member_labels.size())
+
+    logits_labels = torch.vstack((member_labels, nonmember_labels)).squeeze(1)
+
+    # print(target_evaluation_mask.size())
+    # mask_total = torch.vstack((target_evaluation_mask, shadow_evaluation_mask)).squeeze(1)
+    attack_logits_total = attack_model(logits_total)
+
+    _, indices = torch.max(attack_logits_total, dim=1)
+    # print(indices.size())
+    # print(logits_labels.size())
+    # print(mask_total.size())
+    # print((indices[mask_total] == logits_labels[mask_total]).size())
+    # if len(target_evaluation_mask.shape) == 2:
+    #     mask_total = torch.vstack((target_evaluation_mask, shadow_evaluation_mask))
+    # else:
+    #     mask_total = torch.vstack((target_evaluation_mask.unsqueeze(1), shadow_evaluation_mask.unsqueeze(1)))
+    # if len(mask_total.shape) == 2:
+    #     mask_total = mask_total.squeeze(1)
+    # else:
+    #     print("2:1 ", mask_total.shape)
+    correct = torch.sum((indices == logits_labels))
+    return correct.item() * 1.0 / len(logits_labels)
 
 def Unlearning_MIA_evaluation(attack_model, target_model,
                    target_g, target_features, target_evaluation_mask):

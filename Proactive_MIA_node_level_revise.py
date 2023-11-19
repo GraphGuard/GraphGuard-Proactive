@@ -249,21 +249,29 @@ if __name__ == "__main__":
     # new evaluation the proactive MIA
     ## use original graph
     try:
-        logits_mem = target_model(target_g.adjacency_matrix(), proactive_target_features)
+        logits_mem = target_model(target_g.adjacency_matrix(), target_features)
         logits_pro_mem = new_target_model(target_g.adjacency_matrix(),proactive_target_features)
         if using_denoising:
             logits_pro_norm_mem = new_nom_adj_target_model(normed_target_g.adjacency_matrix(),proactive_target_features)
     except:
-        logits_mem = target_model(target_g, proactive_target_features)
+        logits_mem = target_model(target_g, target_features)
         logits_pro_mem = new_target_model(target_g,proactive_target_features)
+    # logits_mem_copy = copy.deepcopy(logits_mem)
+    np.save(f'{current_log_folder}/target_mem_logits.npy',
+            logits_mem.detach().numpy())
+    # logits_pro_mem_copy = copy.deepcopy(logits_pro_mem)
+    np.save(f'{current_log_folder}/target_pro_mem_logits.npy',
+            logits_pro_mem.detach().numpy())
     logging.info("=============Final Results=============")
     logging.info("============Trigger Injection (second value high means injected)=============")
-    _, indices = torch.max(logits_mem[proactive_node_index_target], dim=1)
+    _, indices = torch.max(logits_mem, dim=1)
     labels = copy.deepcopy(indices)
     labels = torch.where((labels != -1), proactive_label, labels)
     correct = torch.sum(indices == labels)
     logging.info(f"For logits member:{correct.item() * 1.0 / len(labels)}")
     _, indices = torch.max(logits_pro_mem[proactive_node_index_target], dim=1)
+    labels = copy.deepcopy(indices)
+    labels = torch.where((labels != -1), proactive_label, labels)
     correct = torch.sum(indices == labels)
     logging.info(f"For logits pro member:{correct.item() * 1.0 / len(labels)}")
     if using_denoising:
@@ -292,18 +300,23 @@ if __name__ == "__main__":
         shadow_g.add_nodes(len(shadow_graph_proactive_features))
         shadow_g.add_edges(src_idx, src_idx)
     try:
-        logits_non_mem = target_model(shadow_g.adjacency_matrix(), shadow_graph_proactive_features)
-        logits_pro_non_mem = new_target_model(shadow_g.adjacency_matrix(),shadow_graph_proactive_features)
-        if using_denoising:    
+        logits_non_mem = target_model(shadow_g.adjacency_matrix(), shadow_features)
+        logits_pro_non_mem = target_model(shadow_g.adjacency_matrix(),shadow_graph_proactive_features)
+        if using_denoising:
             logits_pro_norm_non_mem = new_nom_adj_target_model(shadow_g.adjacency_matrix(),shadow_graph_proactive_features)
     except:
-        logits_non_mem = target_model(shadow_g, shadow_graph_proactive_features)
-        logits_pro_non_mem = new_target_model(shadow_g,shadow_graph_proactive_features)
+        logits_non_mem = target_model(shadow_g, shadow_features)
+        logits_pro_non_mem = target_model(shadow_g,shadow_graph_proactive_features)
     if inject_only_proactive:
-        _, indices = torch.max(logits_non_mem[proactive_node_index_shadow], dim=1)
+        _, indices = torch.max(logits_non_mem, dim=1)
     else:
         _, indices = torch.max(logits_non_mem, dim=1)
-
+    # logits_non_mem_copy = copy.deepcopy(logits_non_mem)
+    np.save(f'{current_log_folder}/target_non_mem_logits.npy',
+            logits_non_mem.detach().numpy())
+    # logits_pro_non_mem_copy = copy.deepcopy(logits_pro_non_mem)
+    np.save(f'{current_log_folder}/target_pro_non_mem_logits.npy',
+            logits_pro_non_mem.detach().numpy())
     labels = copy.deepcopy(indices)
     labels = torch.where((labels != -1), proactive_label, labels)
     # print(labels)

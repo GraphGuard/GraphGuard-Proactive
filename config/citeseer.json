@@ -5,14 +5,14 @@
         "proattribute_method": "max",
         "proattribute_max_from": -6,
         "proattribute_max_to": -1,
-        "epochs": 300,
+        "epochs": 10,
         "step": 100,
         "inject_only_proactive": "False",
         "feature_inference_only": "True",
         "net_params": {
             "hidden": 16,
             "num_labels": 6,
-            "dropout": 0.5
+            "dropout": 0.8
         }
     }
 }

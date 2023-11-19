@@ -17,7 +17,7 @@ if __name__ == '__main__':
     dataset = args.dataset
     model_name =args.model
     folder = f"log/{dataset}_{model_name}_max_False_True_-6_-1"
-    first_folder_with_extension = f"log/{dataset}_{model_name}_max_False_True_-6_-1/" + os.listdir(folder)[0] + "/"
+    first_folder_with_extension = f"log/{dataset}_{model_name}_max_False_True_-6_-1/" + os.listdir(folder)[-1] + "/"
 
     # ours_mem = np.load(first_folder_with_extension + 'new_target_pro_feat_eye_g_logits.npy')
     # ours_non_mem = np.load(
@@ -57,14 +57,19 @@ if __name__ == '__main__':
     sns.color_palette("pastel")
 
     folder = f"log/{dataset}_{model_name}_max_False_True_-6_-1"
-    first_folder_with_extension = f"log/{dataset}_{model_name}_max_False_True_-6_-1/" + os.listdir(folder)[0]
+    first_folder_with_extension = f"log/{dataset}_{model_name}_max_False_True_-6_-1/" + os.listdir(folder)[-1]
 
     # path1 = r"./log"
     # model_name = r"/flickr_GAT_max_False_True_-6_-1/"
-    ours_mem_file = "/new_target_pro_feat_eye_g_logits.npy"
-    ours_non_file = "/target_pro_feat_eye_g_non_pro_logits.npy"
-    Baseline_mem_file = "/target_feat_eye_g_logits.npy"
-    Baseline_non_file = "/target_feat_g_non_proa_logits.npy"
+    # ours_mem_file = "/new_target_pro_feat_eye_g_logits.npy"
+    # ours_non_file = "/target_pro_feat_eye_g_non_pro_logits.npy"
+    # Baseline_mem_file = "/target_feat_eye_g_logits.npy"
+    # Baseline_non_file = "/target_feat_g_non_proa_logits.npy"
+
+    ours_mem_file = "/target_pro_mem_logits.npy"
+    ours_non_file = "/target_pro_non_mem_logits.npy"
+    Baseline_mem_file = "/target_mem_logits.npy"
+    Baseline_non_file = "/target_non_mem_logits.npy"
 
     fig, axes = plt.subplots(1, 2)
     ours_mem = np.amax(np.load((first_folder_with_extension + ours_mem_file).replace("\\", "/")), axis=1)

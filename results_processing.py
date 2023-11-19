@@ -42,16 +42,28 @@ if __name__ == '__main__':
     dataset = args.dataset
     model = args.model
     folder_name = f"{dataset}_{model}_max_False_True_-6_-1"
+    # if not os.path.exists(f'results/{folder_name}'):
+    #     os.makedirs(f'results/{folder_name}')
+    # if not os.path.exists(f'results/{folder_name}/results_dict.json'):
+    #     # save results_dict to json file
+    #     results_dict = read_logs(f'./log/{folder_name}')
+    #     with open(f'results/{folder_name}/results_dict.json', 'w') as f:
+    #         json.dump(results_dict, f)
+    # else:
+    #     print("File results_dict.json already exists!")
+    #     results_dict = load_json(f'results/{folder_name}/results_dict.json')
+
     if not os.path.exists(f'results/{folder_name}'):
         os.makedirs(f'results/{folder_name}')
-    if not os.path.exists(f'results/{folder_name}/results_dict.json'):
+    # if not os.path.exists(f'results/{folder_name}/results_dict.json'):
         # save results_dict to json file
-        results_dict = read_logs(f'./log/{folder_name}')
-        with open(f'results/{folder_name}/results_dict.json', 'w') as f:
-            json.dump(results_dict, f)
-    else:
-        print("File results_dict.json already exists!")
-        results_dict = load_json(f'results/{folder_name}/results_dict.json')
+    results_dict = read_logs(f'./log/{folder_name}')
+    with open(f'results/{folder_name}/results_dict.json', 'w') as f:
+        json.dump(results_dict, f)
+    # else:
+    #     print("File results_dict.json already exists!")
+    #     results_dict = load_json(f'results/{folder_name}/results_dict.json')
+
     # load results_dict from json file
     # print(results_dict)
     # calculate the average and standard deviation of each value in results_dict

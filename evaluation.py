@@ -21,7 +21,7 @@ def get_prob_files_by_dataset(dataset, model_name):
     # Unlearning_without_defence_
     # folder = f"log/{dataset}_{model_name}_Unlearning_without_defence_max_False_True_-6_-1"
     folder = f"log/{dataset}_{model_name}_max_False_True_-6_-1"
-    first_folder_with_extension = f"log/{dataset}_{model_name}_max_False_True_-6_-1/" + os.listdir(folder)[0] + "/"
+    first_folder_with_extension = f"log/{dataset}_{model_name}_max_False_True_-6_-1/" + os.listdir(folder)[-1] + "/"
     print(first_folder_with_extension)
     files_with_extension = [file for file in os.listdir(first_folder_with_extension) if file.endswith('logits.npy')]
     model_prob_dict[model_name] = files_with_extension
@@ -72,8 +72,10 @@ def calculate_fp_tp(true_labels, predicted_labels, positive_class):
     return fp/(fp+tn), tp/(tp+fn)
 
 def calculate_auc_score(prob_dict, log_paths, extra_exp):
-    ours = ['target_pro_feat_eye_g_non_pro_logits.npy', 'new_target_pro_feat_eye_g_logits.npy']
-    baseline = ['target_feat_g_non_proa_logits.npy', 'target_logits.npy']
+    # ours = ['target_pro_feat_eye_g_non_pro_logits.npy', 'new_target_pro_feat_eye_g_logits.npy']
+    # baseline = ['target_feat_g_non_proa_logits.npy', 'target_logits.npy']
+    baseline = ['target_non_mem_logits.npy', 'target_mem_logits.npy']
+    ours = ['target_pro_non_mem_logits.npy', 'target_pro_mem_logits.npy']
     compeff = ['target_feat_eye_g_non_pro_logits.npy', 'target_feat_eye_g_logits.npy']
     comprobust = ['target_pro_feat_eye_g_non_pro_logits.npy', 'new_nom_adj_target_logits.npy']
     # get key and prob from dict
@@ -109,14 +111,14 @@ def calculate_auc_score(prob_dict, log_paths, extra_exp):
             # calculate FP Rate and TP rate
             # fp_rate = fp / len(y_true_0)
             # tp_rate = tp / len(y_true_1)
-            print(f"{model}_{key}_fpr_tpr_dict:\n {fpr_tpr_dict} \n")
+            # print(f"{model}_{key}_fpr_tpr_dict:\n {fpr_tpr_dict} \n")
             # save fpr_tpr_dict to csv
             df = pd.DataFrame(fpr_tpr_dict['results'])
             df.to_csv(f'{model}_{key}_fpr_tpr_dict.csv', index=False)
             auc_score = roc_auc_score(y_true, y_prob)
             if auc_score < 0.5:
                 auc_score = 1 - auc_score
-            # auc_score_dict[model] = auc_score
+            auc_score_dict[model] = auc_score
             # add the trp and fpr to dict
             auc_score_dict[model] = {'auc_score':auc_score, 'tpr': tpr, 'fpr': fpr}
         exp_results[key] = auc_score_dict

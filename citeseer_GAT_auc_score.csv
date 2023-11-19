@@ -1,0 +1,3 @@
+term,dataset,model,auc_score
+ours,citeseer,GAT,0.9016371013569517
+baseline,citeseer,GAT,0.7752049543761605

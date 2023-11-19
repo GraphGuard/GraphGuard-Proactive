@@ -12,7 +12,7 @@ import logging
 from net.estimateadj import ProGNN
 from net.gcn import GCN
 from train.train_gnn import Evaluation_gnn, Train_gnn_model
-from train.train_mia import Baseline_mia, MIA_evaluation,  Unlearning_MIA_evaluation
+from train.train_mia import Baseline_mia, MIA_evaluation,  Unlearning_MIA_evaluation, Pro_mia, Pro_MIA_evaluation
 from train.train_proactive import Generate_proactive_features
 from utils.graph_processing import Graph_partition, Identify_proactive_nodes, Select_proactive_node, load_data, \
     normalize, subgraph_generation
@@ -37,6 +37,21 @@ class GNN_sythetic(nn.Module):
         h = self.conv2(graph, h)
         h = F.relu(h)
         return h
+
+# class GNN_sythetic(nn.Module):
+#     def __init__(self, feature_number, hid_feats, out_feats):
+#         super().__init__()
+#         self.fc1 = nn.Linear(
+#             feature_number, hid_feats)
+#         self.fc2 = nn.Linear(
+#             hid_feats, out_feats)
+#
+#     def forward(self, inputs):
+#         h = self.fc1(inputs)
+#         h = F.relu(h)
+#         h = self.fc2(h)
+#         h = F.relu(h)
+#         return h
 
 # config logging
 def config_logging(log_path):
@@ -211,6 +226,8 @@ if __name__ == "__main__":
                                                                                                target_labels)
     # train GNN model and attack (with proactive)
     logging.info("Start train the New Target GNN model with proactive feature:")
+    if dataset_name == 'citeseer':
+        params['epochs']=2500
     new_target_model = Train_gnn_model(params, target_g,
                                        proactive_target_features, target_labels,
                                        target_train_mask, target_test_mask)
@@ -346,16 +363,25 @@ if __name__ == "__main__":
     # breakpoint()
     results_labels = torch.ones(target_g.number_of_nodes(), dtype=torch.long)
     generation_model = GNN_sythetic(features.shape[1], 32, 16)
+    # generation_model = GNN_sythetic(features.shape[1], 256, (features.shape[0]*(features.shape[0]+1)//2))
     opt_generation = torch.optim.Adam(generation_model.parameters())
 
-    target_model.eval()
-    attack_model.eval()
+    new_target_model.eval()
+
+    label_0_index_target_graph_mask = proactive_nodex_index_target_mask  # .squeeze(1)
+    label_others_index_target_graph_mask = torch.logical_not(label_0_index_target_graph_mask)
+
+    # new_attack_model = Baseline_mia(params, target_g, shadow_g, new_target_model, proactive_target_features, shadow_features)
+    new_attack_model = Pro_mia(params, target_g, new_target_model, proactive_target_features, label_0_index_target_graph_mask, label_others_index_target_graph_mask
+                                    )
+    new_attack_model.train()
     print("start training generation model")
-    for epoch in range(200):
+    for epoch in range(10):
         generation_model.train()
         # forward propagation by using all nodes
         # print(target_graph_features.size())
-        logits = generation_model(target_g, target_features)
+        logits = generation_model(target_g, proactive_target_features)
+        # logits = generation_model(proactive_target_features)
         # compute loss
         # print(logits.size())
         # print(target_graph_train_mask)
@@ -365,9 +391,9 @@ if __name__ == "__main__":
         src = torch.nonzero(new_adj)[:, 0]
         dst = torch.nonzero(new_adj)[:, 1]
         g_new = dgl.graph((src, dst))
-        g_new.ndata['feat'] = target_features
-        output = new_target_model(g_new.adjacency_matrix(), target_features)
-        results = attack_model(output)
+        g_new.ndata['feat'] = proactive_target_features
+        output = new_target_model(g_new.adjacency_matrix(), proactive_target_features)
+        results = new_attack_model(output)
         # print(results.size())
         # print(results_labels.size())
         # print(results_labels)
@@ -377,14 +403,15 @@ if __name__ == "__main__":
         # # compute validation accuracy
         # acc = evaluate(model, dgl_target_graph, target_graph_features, target_graph_labels, target_graph_test_mask)
         # backward propagation
+        # if (epoch + 1) % 100 == 0:
+        #     print(f"Epoch:{epoch+1}, the loss is:{generation_loss}")
         opt_generation.zero_grad()
         generation_loss.backward()
         opt_generation.step()
 
     # label_0_in_target_graph = proactive_node_index_target.long()
     # label_others_in_target_graph = th.Tensor(list(target_set_index))[(target_graph_labels != 0)].long()
-    label_0_index_target_graph_mask = proactive_nodex_index_target_mask#.squeeze(1)
-    label_others_index_target_graph_mask = torch.logical_not(label_0_index_target_graph_mask)
+
 
     ## graph partition based on attributes
     ### select nodes whoes label is 0 and the attribute in index ? is 1.
@@ -410,41 +437,53 @@ if __name__ == "__main__":
     print("start unlearning target model")
 
     unlearning_opt = torch.optim.Adam(new_target_model.parameters())
-    attack_model.eval()
-    for epoch in range(10):
-        target_model.train()
+    new_attack_model.train()
+
+    random_target_label = torch.randint(0,num_classes-1,[target_g.number_of_nodes()])
+    if dataset_name == 'citeseer':
+        this_epoches = 4
+    else:
+        this_epoches = 2
+
+    for epoch in range(this_epoches):
+        new_target_model.train()
         # forward propagation by using all nodes
         # print(shadow_graph_features.size())
         if isinstance(g_new, dgl.DGLGraph):
-            logits = new_target_model(g_new.adjacency_matrix(), target_features)
-        elif isinstance(target_features, torch.Tensor):
-            logits = new_target_model(g_new, target_features)
+            logits = new_target_model(g_new.adjacency_matrix(), proactive_target_features)
+        elif isinstance(proactive_target_features, torch.Tensor):
+            logits = new_target_model(g_new, proactive_target_features)
         # logits = new_target_model(g_new, shadow_features)
-        attack_logits = attack_model(logits)
+        attack_logits = new_attack_model(logits)
         # compute loss
         # print(logits.size())
         # print(shadow_graph_train_mask)
         # print(shadow_graph_labels.size())
         # accuracy loss
         acc_loss_forget = F.cross_entropy(logits[label_0_index_target_graph_mask],
-                                          target_labels[label_0_index_target_graph_mask])
+                                          random_target_label[label_0_index_target_graph_mask])
         acc_loss_remain = F.cross_entropy(logits[label_others_index_target_graph_mask],
                                           target_labels[label_others_index_target_graph_mask])
         # unlearning loss
         unlearn_loss_forget = F.cross_entropy(attack_logits[label_0_index_target_graph_mask],
                                               nonmember_labels[label_0_index_target_graph_mask])
         # unlearn_loss_remain = F.cross_entropy(attack_logits[label_others_index_shadow_graph_mask], member_labels[label_others_index_shadow_graph_mask])
-        loss = 1 * acc_loss_remain - 0.1 * acc_loss_forget + 15 * unlearn_loss_forget
+        loss = 1 * acc_loss_remain + 1 * acc_loss_forget + 0 * unlearn_loss_forget
         # + unlearn_loss_remain
         # loss = F.cross_entropy(logits[shadow_graph_train_mask], shadow_graph_labels[shadow_graph_train_mask])
         # # compute validation accuracy
         # acc = evaluate(model, dgl_shadow_graph, shadow_graph_features, shadow_graph_labels, shadow_graph_test_mask)
         # backward propagation
+        # print(unlearn_loss_forget)
+        # print(acc_loss_forget)
+        # print(acc_loss_remain)
+
+
         unlearning_opt.zero_grad()
         loss.backward()
         unlearning_opt.step()
 
-    unlearned_target_eval_acc, unlearned_target_pro_feat_logits, unlearned_target_pro_feat_prob_list = Evaluation_gnn(new_target_model, target_g, target_features, target_labels, target_test_mask)
+    unlearned_target_eval_acc, unlearned_target_pro_feat_logits, unlearned_target_pro_feat_prob_list = Evaluation_gnn(new_target_model, target_g, proactive_target_features, target_labels, target_train_mask)
     print("unlearned target model accuracy is")
     print(unlearned_target_eval_acc)
 
@@ -458,10 +497,22 @@ if __name__ == "__main__":
     attack_model.eval()
     # acc,_,_ = Evaluation_gnn(new_target_model, target_g, target_features, target_labels) #model(dgl_target_graph, target_graph_features)
     # mia_attack_acc = Unlearning_MIA_evaluation(attack_model, new_target_model, target_g, target_features, label_0_index_target_graph_mask)
-    attack_acc = MIA_evaluation(attack_model, new_target_model,
-                                target_g, target_features, shadow_g, shadow_features, torch.logical_and(label_0_index_target_graph_mask,target_test_mask),
-                                torch.zeros(shadow_g.number_of_nodes(), dtype=torch.bool))
+
+    # attack_acc = MIA_evaluation(new_attack_model, new_target_model,
+    #                             target_g, proactive_target_features, shadow_g, shadow_features, torch.logical_and(label_0_index_target_graph_mask,target_test_mask),
+    #                             torch.zeros(shadow_g.number_of_nodes(), dtype=torch.bool))
+
+    # attack_acc = Pro_MIA_evaluation(new_attack_model, new_target_model,
+    #                             target_g, proactive_target_features, target_g, proactive_target_features,
+    #                             label_0_index_target_graph_mask, label_others_index_target_graph_mask)
     # balanced_mia_attack_acc = 0.5*mia_attack_acc + 0.5*attack_acc
+    # new_attack_model = Pro_mia(params, target_g, new_target_model, proactive_target_features,
+    #                            label_0_index_target_graph_mask, label_others_index_target_graph_mask
+    #                            )
+    attack_acc = MIA_evaluation(new_attack_model, new_target_model,
+                                target_g, proactive_target_features, shadow_g, shadow_features, target_evaluation_mask,
+                                shadow_evaluation_mask)
+
     print("======Reproduce Results  E3&4==========")
     print("Unlearned model accuracy is")
     print(unlearned_target_eval_acc)

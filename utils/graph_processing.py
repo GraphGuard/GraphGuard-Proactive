@@ -6,6 +6,7 @@ import torch
 import scipy.sparse as sp
 import torch
 import logging
+import ast
 
 def load_data(dataset_name):
     """
@@ -75,7 +76,7 @@ def subgraph_generation(g, features, labels, train_mask, test_mask, params):
     return g, features, labels, train_mask, test_mask
 
 
-def Graph_partition(g, features, labels, train_mask, test_mask):
+def Graph_partition(g, features, labels, train_mask, test_mask, recorded_partition = False):
     """
     This function is for use greedy modularity graph partition technique to divide a large graph to TWO subgraph.
     
@@ -103,12 +104,32 @@ def Graph_partition(g, features, labels, train_mask, test_mask):
     target_set_index = set()
 
     shadow_set_index = set()
+    # print(index_lists[1])
+    # print(a)
 
     for i in range(list_len):
         if i % 2 == 0:
             target_set_index = target_set_index.union(index_lists[i])
         else:
             shadow_set_index = shadow_set_index.union(index_lists[i])
+
+    # print(len(target_set_index))
+    # print(len(shadow_set_index))
+    # print(a)
+    # with open('data/citeseer_target_graph_indexes.txt', 'w') as f:
+    #     f.write(str(target_set_index))
+    #
+    # with open('data/citeseer_shadow_graph_indexes.txt', 'w') as f:
+    #     f.write(str(shadow_set_index))
+
+    # a = a
+    # recorded_partition = True
+
+    if recorded_partition:
+        with open('data/sample_citeseer_target_graph_indexes.txt', 'r') as f:
+            target_set_index = ast.literal_eval(f.read())
+        with open('data/sample_citeseer_shadow_graph_indexes.txt', 'r') as f:
+            shadow_set_index = ast.literal_eval(f.read())
 
     networkx_target_graph = networkx_g.subgraph(list(target_set_index)).copy()
     target_g = dgl.from_networkx(networkx_target_graph)

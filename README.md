@@ -30,7 +30,7 @@ pip install deeprobust==0.2.8 matplotlib==3.7.1 seaborn==0.12.2 pandas==2.0.1
 
 ``/config`` Json files for the hyperparameters for different datasets.
 
-``/data`` Graph partition index files (to be updated).
+``/data`` Graph partition index files.
 
 ``/net`` Graph Neural Network Architectures.
 

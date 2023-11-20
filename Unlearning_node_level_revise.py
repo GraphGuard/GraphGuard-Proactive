@@ -132,10 +132,15 @@ if __name__ == "__main__":
     else:
         logging.info("Do not need to split the graph into subsets")
     # normalize features
+    if dataset_name == 'citeseer':
+        partition = True
+    else:
+        partition = False
     target_g, target_features, target_labels, target_train_mask, target_test_mask, \
         shadow_g, shadow_features, shadow_labels, shadow_train_mask, shadow_test_mask = \
-        Graph_partition(g, features, labels, train_mask, test_mask)
+        Graph_partition(g, features, labels, train_mask, test_mask,  recorded_partition = partition)
     # select a proper proactive feature and label index
+
     logging.info("Select the proactive feature and label index")
     proactive_features_index, proactive_label = Select_proactive_node(target_features, target_labels)
 
@@ -227,7 +232,7 @@ if __name__ == "__main__":
     # train GNN model and attack (with proactive)
     logging.info("Start train the New Target GNN model with proactive feature:")
     if dataset_name == 'citeseer':
-        params['epochs']=2500
+        params['epochs']=3000
     new_target_model = Train_gnn_model(params, target_g,
                                        proactive_target_features, target_labels,
                                        target_train_mask, target_test_mask)

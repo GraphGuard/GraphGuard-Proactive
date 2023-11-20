@@ -132,6 +132,9 @@ if __name__ == "__main__":
     # train target GNN model
     logging.info("Start train the target GNN model")
 
+    if dataset_name == 'citeseer':
+        params['epochs']=300
+
     target_model = Train_gnn_model(params, target_g,
                                    target_features,
                                    target_labels,

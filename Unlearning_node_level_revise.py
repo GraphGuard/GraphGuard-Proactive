@@ -131,11 +131,11 @@ if __name__ == "__main__":
                                                                          params)
     else:
         logging.info("Do not need to split the graph into subsets")
-    # normalize features
-    if dataset_name == 'citeseer':
-        partition = True
+    # graph partitioning
+    if dataset_name == 'citeseer': 
+        partition = True # partition=True will load a sample graph partition (only support citeseer currently).
     else:
-        partition = False
+        partition = False # partition=False will do the graph partition from scratch.
     target_g, target_features, target_labels, target_train_mask, target_test_mask, \
         shadow_g, shadow_features, shadow_labels, shadow_train_mask, shadow_test_mask = \
         Graph_partition(g, features, labels, train_mask, test_mask,  recorded_partition = partition)
@@ -231,7 +231,7 @@ if __name__ == "__main__":
                                                                                                target_labels)
     # train GNN model and attack (with proactive)
     logging.info("Start train the New Target GNN model with proactive feature:")
-    if dataset_name == 'citeseer':
+    if dataset_name == 'citeseer': # load citeseer's training epoch for target model.
         params['epochs']=3000
     new_target_model = Train_gnn_model(params, target_g,
                                        proactive_target_features, target_labels,
@@ -445,7 +445,7 @@ if __name__ == "__main__":
     new_attack_model.train()
 
     random_target_label = torch.randint(0,num_classes-1,[target_g.number_of_nodes()])
-    if dataset_name == 'citeseer':
+    if dataset_name == 'citeseer': # load citeseer's finetuning epoch for unlearning.
         this_epoches = 4
     else:
         this_epoches = 2

@@ -23,35 +23,35 @@ torch.manual_seed(42)
 np.random.seed(42)
 # Set the seed for DGL
 dgl.random.seed(42)
-class GNN_sythetic(nn.Module):
-    def __init__(self, feature_number, hid_feats, out_feats):
-        super().__init__()
-        self.conv1 = dglnn.GraphConv(
-            in_feats=feature_number, out_feats=hid_feats)
-        self.conv2 = dglnn.GraphConv(
-            in_feats=hid_feats, out_feats=out_feats)
-
-    def forward(self, graph, inputs):
-        h = self.conv1(graph, inputs)
-        h = F.relu(h)
-        h = self.conv2(graph, h)
-        h = F.relu(h)
-        return h
-
 # class GNN_sythetic(nn.Module):
 #     def __init__(self, feature_number, hid_feats, out_feats):
 #         super().__init__()
-#         self.fc1 = nn.Linear(
-#             feature_number, hid_feats)
-#         self.fc2 = nn.Linear(
-#             hid_feats, out_feats)
+#         self.conv1 = dglnn.GraphConv(
+#             in_feats=feature_number, out_feats=hid_feats)
+#         self.conv2 = dglnn.GraphConv(
+#             in_feats=hid_feats, out_feats=out_feats)
 #
-#     def forward(self, inputs):
-#         h = self.fc1(inputs)
+#     def forward(self, graph, inputs):
+#         h = self.conv1(graph, inputs)
 #         h = F.relu(h)
-#         h = self.fc2(h)
+#         h = self.conv2(graph, h)
 #         h = F.relu(h)
 #         return h
+
+class GNN_sythetic(nn.Module):
+    def __init__(self, feature_number, hid_feats, out_feats):
+        super().__init__()
+        self.fc1 = nn.Linear(
+            feature_number, hid_feats)
+        self.fc2 = nn.Linear(
+            hid_feats, out_feats)
+
+    def forward(self, inputs):
+        h = self.fc1(inputs)
+        h = F.relu(h)
+        h = self.fc2(h)
+        h = F.relu(h)
+        return h
 
 # config logging
 def config_logging(log_path):
@@ -131,11 +131,11 @@ if __name__ == "__main__":
                                                                          params)
     else:
         logging.info("Do not need to split the graph into subsets")
-    # graph partitioning
-    if dataset_name == 'citeseer': 
-        partition = True # partition=True will load a sample graph partition (only support citeseer currently).
+    # normalize features
+    if dataset_name == 'citeseer':
+        partition = True
     else:
-        partition = False # partition=False will do the graph partition from scratch.
+        partition = False
     target_g, target_features, target_labels, target_train_mask, target_test_mask, \
         shadow_g, shadow_features, shadow_labels, shadow_train_mask, shadow_test_mask = \
         Graph_partition(g, features, labels, train_mask, test_mask,  recorded_partition = partition)
@@ -231,7 +231,7 @@ if __name__ == "__main__":
                                                                                                target_labels)
     # train GNN model and attack (with proactive)
     logging.info("Start train the New Target GNN model with proactive feature:")
-    if dataset_name == 'citeseer': # load citeseer's training epoch for target model.
+    if dataset_name == 'citeseer':
         params['epochs']=3000
     new_target_model = Train_gnn_model(params, target_g,
                                        proactive_target_features, target_labels,
@@ -367,8 +367,9 @@ if __name__ == "__main__":
     # results_labels = torch.ones(shadow_g.number_of_nodes(), dtype=torch.long).squeeze(1)
     # breakpoint()
     results_labels = torch.ones(target_g.number_of_nodes(), dtype=torch.long)
-    generation_model = GNN_sythetic(features.shape[1], 32, 16)
+    # generation_model = GNN_sythetic(features.shape[1], 32, 16)
     # generation_model = GNN_sythetic(features.shape[1], 256, (features.shape[0]*(features.shape[0]+1)//2))
+    generation_model = GNN_sythetic(features.shape[1], 256, 256)
     opt_generation = torch.optim.Adam(generation_model.parameters())
 
     new_target_model.eval()
@@ -381,12 +382,12 @@ if __name__ == "__main__":
                                     )
     new_attack_model.train()
     print("start training generation model")
-    for epoch in range(10):
+    for epoch in range(200):
         generation_model.train()
         # forward propagation by using all nodes
         # print(target_graph_features.size())
-        logits = generation_model(target_g, proactive_target_features)
-        # logits = generation_model(proactive_target_features)
+        # logits = generation_model(target_g, proactive_target_features)
+        logits = generation_model(proactive_target_features)
         # compute loss
         # print(logits.size())
         # print(target_graph_train_mask)
@@ -413,6 +414,8 @@ if __name__ == "__main__":
         opt_generation.zero_grad()
         generation_loss.backward()
         opt_generation.step()
+        # print("Epoch:")
+        # print(epoch)
 
     # label_0_in_target_graph = proactive_node_index_target.long()
     # label_others_in_target_graph = th.Tensor(list(target_set_index))[(target_graph_labels != 0)].long()
@@ -445,7 +448,7 @@ if __name__ == "__main__":
     new_attack_model.train()
 
     random_target_label = torch.randint(0,num_classes-1,[target_g.number_of_nodes()])
-    if dataset_name == 'citeseer': # load citeseer's finetuning epoch for unlearning.
+    if dataset_name == 'citeseer':
         this_epoches = 4
     else:
         this_epoches = 2
